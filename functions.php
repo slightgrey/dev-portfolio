@@ -17,3 +17,5 @@ require VINCENT_DIR . '/inc/options.php';
 require VINCENT_DIR . '/inc/data.php';
 require VINCENT_DIR . '/inc/vite.php';
 require VINCENT_DIR . '/inc/seed.php';
+require VINCENT_DIR . '/inc/minify.php';
+require VINCENT_DIR . '/inc/cleanup.php';

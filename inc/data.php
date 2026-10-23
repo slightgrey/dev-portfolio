@@ -130,22 +130,38 @@ function vincent_get_projects() {
 	return array_map(
 		static function ( $post ) {
 			$frameworks = get_post_meta( $post->ID, '_vincent_frameworks', true );
-			$bg_id      = (int) get_post_meta( $post->ID, '_vincent_bg_image', true );
-			$image      = get_the_post_thumbnail_url( $post, 'vincent-project' );
-			$bg_image   = $bg_id ? wp_get_attachment_image_url( $bg_id, 'vincent-project' ) : '';
+			$image      = vincent_image( (int) get_post_thumbnail_id( $post ), 'vincent-project' );
+			$bg_image   = vincent_image( (int) get_post_meta( $post->ID, '_vincent_bg_image', true ), 'vincent-project' );
 
 			return array(
 				'id'          => $post->ID,
 				'name'        => vincent_plain_text( get_the_title( $post ) ),
 				'description' => vincent_plain_text( get_the_excerpt( $post ) ),
 				'href'        => (string) get_post_meta( $post->ID, '_vincent_url', true ),
-				'image'       => $image ? $image : '',
-				'bgImage'     => $bg_image ? $bg_image : '',
+				'image'       => $image['url'],
+				'imageSize'   => array( $image['width'], $image['height'] ),
+				'bgImage'     => $bg_image['url'],
+				'bgImageSize' => array( $bg_image['width'], $bg_image['height'] ),
 				'frameworks'  => is_array( $frameworks ) ? array_values( $frameworks ) : array(),
 			);
 		},
 		$posts
 	);
+}
+
+/**
+ * Image URL plus its pixel size, so the front end can set width/height and avoid layout shift.
+ *
+ * @param int    $attachment_id Attachment ID (0 for none).
+ * @param string $size          Registered image size.
+ * @return array{url: string, width: int, height: int}
+ */
+function vincent_image( $attachment_id, $size ) {
+	$src = $attachment_id ? wp_get_attachment_image_src( $attachment_id, $size ) : false;
+
+	return $src
+		? array( 'url' => (string) $src[0], 'width' => (int) $src[1], 'height' => (int) $src[2] )
+		: array( 'url' => '', 'width' => 0, 'height' => 0 );
 }
 
 /**
@@ -155,11 +171,13 @@ function vincent_get_projects() {
  */
 function vincent_get_portfolio_data() {
 	$about_image = (int) vincent_option( 'about_image' );
-	$about_url   = $about_image ? wp_get_attachment_image_url( $about_image, 'large' ) : '';
+	$about_img   = vincent_image( $about_image, 'large' );
 
 	$sections = array();
-	foreach ( array_keys( vincent_option_fields() ) as $section_key ) {
-		$sections[ $section_key ] = vincent_section_enabled( $section_key );
+	foreach ( vincent_option_fields() as $section_key => $section ) {
+		if ( vincent_is_page_section( $section ) ) {
+			$sections[ $section_key ] = vincent_section_enabled( $section_key );
+		}
 	}
 
 	$data = array(
@@ -180,8 +198,9 @@ function vincent_get_portfolio_data() {
 			vincent_section_header( 'about' ),
 			array(
 				'body'     => (string) vincent_option( 'about_body' ),
-				'image'    => $about_url ? $about_url : '',
-				'imageAlt' => $about_image ? (string) get_post_meta( $about_image, '_wp_attachment_image_alt', true ) : '',
+				'image'     => $about_img['url'],
+				'imageSize' => array( $about_img['width'], $about_img['height'] ),
+				'imageAlt'  => $about_image ? (string) get_post_meta( $about_image, '_wp_attachment_image_alt', true ) : '',
 			)
 		),
 		'worksHeader'    => vincent_section_header( 'works' ),

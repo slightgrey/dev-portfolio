@@ -3,11 +3,18 @@ import { Icon } from "@iconify/react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import AnimatedHeaderSection from "../components/AnimatedHeaderSection";
-import { placeholderGradient, useData } from "../lib/data";
+import { placeholderGradient, sizeAttrs, useData } from "../lib/data";
 
-const ProjectImage = ({ src, alt, index, className }) =>
+const ProjectImage = ({ src, size, alt, index, className }) =>
   src ? (
-    <img src={src} alt={alt} className={className} />
+    <img
+      src={src}
+      {...sizeAttrs(size)}
+      alt={alt}
+      loading="lazy"
+      decoding="async"
+      className={className}
+    />
   ) : (
     <div
       className={className}
@@ -171,6 +178,7 @@ const Works = () => {
               <div className="relative flex items-center justify-center px-10 md:hidden h-[400px]">
                 <ProjectImage
                   src={project.bgImage}
+                  size={project.bgImageSize}
                   alt=""
                   index={index + 7}
                   className="object-cover w-full h-full rounded-md brightness-50"
@@ -178,8 +186,11 @@ const Works = () => {
                 {project.image && (
                   <img
                     src={project.image}
+                    {...sizeAttrs(project.imageSize)}
                     alt={project.name}
-                    className="absolute bg-center px-14 rounded-xl"
+                    loading="lazy"
+                    decoding="async"
+                    className="absolute w-full h-auto bg-center px-14 rounded-xl"
                   />
                 )}
               </div>
@@ -195,6 +206,7 @@ const Works = () => {
           {current && (
             <ProjectImage
               src={current.image}
+              size={current.imageSize}
               alt=""
               index={currentIndex}
               className="object-cover w-full h-full aspect-video"

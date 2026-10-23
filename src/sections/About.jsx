@@ -3,7 +3,7 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import AnimatedHeaderSection from "../components/AnimatedHeaderSection";
 import { AnimatedTextLines } from "../components/AnimatedTextLines";
-import { placeholderGradient, useData } from "../lib/data";
+import { placeholderGradient, sizeAttrs, useData } from "../lib/data";
 
 const About = () => {
   const { about, sections } = useData();
@@ -53,8 +53,11 @@ const About = () => {
           <img
             ref={imgRef}
             src={about.image}
+            {...sizeAttrs(about.imageSize)}
             alt={about.imageAlt || about.title}
-            className="w-md rounded-3xl"
+            loading="lazy"
+            decoding="async"
+            className="w-md h-auto rounded-3xl"
           />
         ) : (
           <div

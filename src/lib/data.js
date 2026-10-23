@@ -18,7 +18,7 @@ const defaults = {
   serviceSummary: [],
   servicesHeader: emptyHeader,
   services: [],
-  about: { ...emptyHeader, body: "", image: "", imageAlt: "" },
+  about: { ...emptyHeader, body: "", image: "", imageSize: [], imageAlt: "" },
   worksHeader: emptyHeader,
   projects: [],
   cta: { values: [], quote: "", marquee: "" },
@@ -30,6 +30,11 @@ const data = { ...defaults, ...(window.vincentData ?? {}) };
 data.sections = { ...allSections, ...data.sections };
 
 export const useData = () => data;
+
+// width/height attributes from a [width, height] pair (from vincent_image()), so the browser
+// reserves the right space before the image loads. Empty when the size is unknown.
+export const sizeAttrs = ([width, height] = []) =>
+  width && height ? { width, height } : {};
 
 // Deterministic gradient used when a project or portrait has no image yet.
 export const placeholderGradient = (seed = 0) => {

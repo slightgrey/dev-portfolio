@@ -18,7 +18,7 @@ $vincent_show = $vincent_data['sections'];
 		<?php if ( $vincent_show['hero'] ) : ?>
 			<p class="text-sm uppercase tracking-[0.5rem]"><?php echo esc_html( $vincent_data['hero']['subTitle'] ); ?></p>
 			<h1 class="banner-text-responsive mt-10 uppercase"><?php echo esc_html( $vincent_data['hero']['title'] ); ?></h1>
-			<p class="mt-10 whitespace-pre-line text-2xl font-light uppercase"><?php echo esc_html( $vincent_data['hero']['text'] ); ?></p>
+			<p class="mt-10 text-2xl font-light uppercase"><?php echo nl2br( esc_html( $vincent_data['hero']['text'] ), false ); ?></p>
 		<?php endif; ?>
 
 		<?php if ( $vincent_show['services'] ) : ?>
@@ -31,7 +31,7 @@ $vincent_show = $vincent_data['sections'];
 
 		<?php if ( $vincent_show['about'] ) : ?>
 			<h2 class="mt-20 text-5xl uppercase"><?php echo esc_html( $vincent_data['about']['title'] ); ?></h2>
-			<p class="mt-6 whitespace-pre-line text-xl font-light"><?php echo esc_html( $vincent_data['about']['body'] ); ?></p>
+			<p class="mt-6 text-xl font-light"><?php echo nl2br( esc_html( $vincent_data['about']['body'] ), false ); ?></p>
 		<?php endif; ?>
 
 		<?php if ( $vincent_show['works'] ) : ?>

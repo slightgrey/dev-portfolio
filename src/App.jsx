@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import ReactLenis from "lenis/react";
-import { useProgress } from "@react-three/drei";
 import { useMediaQuery } from "react-responsive";
 import Navbar from "./sections/Navbar";
 import Hero from "./sections/Hero";
@@ -14,26 +13,30 @@ import { useData } from "./lib/data";
 
 const App = () => {
   const { sections } = useData();
-  const { progress, active } = useProgress();
   const [isReady, setIsReady] = useState(false);
+  const [shownProgress, setShownProgress] = useState(0);
   const reduceMotion = useMediaQuery({ query: "(prefers-reduced-motion: reduce)" });
 
-  // The planet is built in code, so there may be nothing to load: become ready when
-  // loading finishes, when no loader is active shortly after mount, or after a fallback timeout.
+  // Reveal the page once the self-hosted font is ready (capped), not when the 3D scene is.
+  // The scene is a lazy chunk and drops in on its own, so waiting for it would only delay
+  // the first paint of the content (and Largest Contentful Paint).
   useEffect(() => {
-    if (progress >= 100) {
+    let done = false;
+    const reveal = () => {
+      if (done) return;
+      done = true;
+      setShownProgress(100);
       setIsReady(true);
-      return;
-    }
-    const idle = !active ? setTimeout(() => setIsReady(true), 400) : null;
-    const fallback = setTimeout(() => setIsReady(true), 6000);
-    return () => {
-      clearTimeout(idle);
-      clearTimeout(fallback);
     };
-  }, [progress, active]);
-
-  const shownProgress = isReady ? 100 : Math.floor(progress);
+    const tick = requestAnimationFrame(() => setShownProgress(70));
+    const cap = setTimeout(reveal, 1500);
+    (document.fonts?.ready ?? Promise.resolve()).then(reveal);
+    return () => {
+      done = true;
+      cancelAnimationFrame(tick);
+      clearTimeout(cap);
+    };
+  }, []);
 
   return (
     <ReactLenis root options={{ smoothWheel: !reduceMotion }}>

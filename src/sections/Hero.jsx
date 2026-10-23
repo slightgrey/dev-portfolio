@@ -1,16 +1,28 @@
-import { useRef } from "react";
-import { Canvas } from "@react-three/fiber";
-import { Environment, Float, Lightformer } from "@react-three/drei";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { useMediaQuery } from "react-responsive";
-import { Planet } from "../components/Planet";
 import AnimatedHeaderSection from "../components/AnimatedHeaderSection";
 import ScrollHint from "../components/ScrollHint";
 import { useData } from "../lib/data";
+
+// Code-split: three.js, React Three Fiber and drei load in their own chunk.
+const HeroScene = lazy(() => import("../components/HeroScene"));
 
 const Hero = () => {
   const { hero } = useData();
   const isMobile = useMediaQuery({ maxWidth: 853 });
   const sectionRef = useRef(null);
+  const [show3D, setShow3D] = useState(false);
+
+  // Mount the 3D scene once the browser is idle after the first paint, so downloading and
+  // parsing three.js doesn't compete with getting the text on screen.
+  useEffect(() => {
+    if ("requestIdleCallback" in window) {
+      const id = window.requestIdleCallback(() => setShow3D(true), { timeout: 2000 });
+      return () => window.cancelIdleCallback(id);
+    }
+    const id = setTimeout(() => setShow3D(true), 1200);
+    return () => clearTimeout(id);
+  }, []);
 
   return (
     <section
@@ -31,23 +43,11 @@ const Hero = () => {
         style={{ width: "100vw", height: "100vh" }}
         aria-hidden="true"
       >
-        <Canvas
-          shadows
-          camera={{ position: [0, 0, -10], fov: 17.5, near: 1, far: 20 }}
-        >
-          <ambientLight intensity={0.5} />
-          <Float speed={0.5}>
-            <Planet scale={isMobile ? 0.7 : 1} />
-          </Float>
-          <Environment resolution={256}>
-            <group rotation={[-Math.PI / 3, 4, 1]}>
-              <Lightformer form={"circle"} intensity={2} position={[0, 5, -9]} scale={10} />
-              <Lightformer form={"circle"} intensity={2} position={[0, 3, 1]} scale={10} />
-              <Lightformer form={"circle"} intensity={2} position={[-5, -1, -1]} scale={10} />
-              <Lightformer form={"circle"} intensity={2} position={[10, 1, 0]} scale={16} />
-            </group>
-          </Environment>
-        </Canvas>
+        {show3D && (
+          <Suspense fallback={null}>
+            <HeroScene scale={isMobile ? 0.7 : 1} />
+          </Suspense>
+        )}
       </figure>
     </section>
   );

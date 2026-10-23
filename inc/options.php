@@ -97,7 +97,30 @@ function vincent_option_fields() {
 				'socials'          => array( 'type' => 'pairs', 'label' => __( 'Social links', 'dev-portfolio' ), 'help' => __( 'One per line: Name | https://url', 'dev-portfolio' ), 'default' => array( array( 'name' => 'GitHub', 'href' => 'https://github.com/' ), array( 'name' => 'LinkedIn', 'href' => 'https://www.linkedin.com/' ) ) ),
 			),
 		),
+		// Site-wide settings, not a front-page section: no Shown/Hidden switch.
+		'performance'     => array(
+			'title'       => __( 'Performance', 'dev-portfolio' ),
+			'description' => __( 'Site-wide output settings. These do not change how the site looks.', 'dev-portfolio' ),
+			'icon'        => 'dashicons-performance',
+			'toggle'      => false,
+			'fields'      => array(
+				'minify_html'        => array( 'type' => 'switch', 'label' => __( 'Minify HTML', 'dev-portfolio' ), 'help' => __( 'Removes comments and extra whitespace from front-end pages (View Source shows compact HTML). Turn off while debugging markup.', 'dev-portfolio' ), 'default' => true ),
+				'disable_emoji'      => array( 'type' => 'switch', 'label' => __( 'Disable emoji script', 'dev-portfolio' ), 'help' => __( 'Removes WordPress\'s emoji script and styles on every page and in wp-admin. Emoji still display, using the visitor\'s own system emoji.', 'dev-portfolio' ), 'default' => true ),
+				'front_block_styles' => array( 'type' => 'switch', 'label' => __( 'Remove block styles on the home page', 'dev-portfolio' ), 'help' => __( 'The home page is built by the theme and uses no block-editor content. Posts and pages keep these styles.', 'dev-portfolio' ), 'default' => true ),
+				'clean_head'         => array( 'type' => 'switch', 'label' => __( 'Remove unused <head> tags', 'dev-portfolio' ), 'help' => __( 'Removes the WordPress version tag, RSD, shortlink, oEmbed and REST API discovery links. Feeds, canonical and the REST API itself keep working.', 'dev-portfolio' ), 'default' => true ),
+			),
+		),
 	);
+}
+
+/**
+ * Whether a settings card is a front-page section with a Shown/Hidden switch.
+ *
+ * @param array $section Section definition from vincent_option_fields().
+ * @return bool
+ */
+function vincent_is_page_section( $section ) {
+	return $section['toggle'] ?? true;
 }
 
 /**
@@ -247,6 +270,19 @@ function vincent_render_option_field( $key, $field ) {
 			vincent_render_image_field( $id, $name, (int) $value );
 			break;
 
+		case 'switch':
+			// Same look as the section switches, but a different class so it doesn't fade its card.
+			?>
+			<span class="tw:relative tw:inline-flex tw:select-none tw:items-center tw:gap-3">
+				<input type="checkbox" id="<?php echo esc_attr( $id ); ?>" name="<?php echo esc_attr( $name ); ?>" value="1" class="vdp-switch tw:peer tw:absolute tw:inset-0 tw:z-10 tw:m-0 tw:size-full tw:cursor-pointer tw:opacity-0" <?php checked( (bool) $value ); ?>>
+				<span class="tw:block tw:h-6 tw:w-11 tw:rounded-full tw:bg-neutral-300 tw:transition tw:peer-checked:bg-black tw:peer-focus-visible:ring-4 tw:peer-focus-visible:ring-gold/40" aria-hidden="true"></span>
+				<span class="tw:absolute tw:top-1 tw:left-1 tw:size-4 tw:rounded-full tw:bg-white tw:shadow tw:transition tw:peer-checked:translate-x-5 tw:peer-checked:bg-gold" aria-hidden="true"></span>
+				<span class="tw:hidden tw:w-10 tw:text-xs tw:font-semibold tw:uppercase tw:tracking-wider tw:text-neutral-900 tw:peer-checked:inline"><?php esc_html_e( 'On', 'dev-portfolio' ); ?></span>
+				<span class="tw:inline tw:w-10 tw:text-xs tw:font-semibold tw:uppercase tw:tracking-wider tw:text-neutral-400 tw:peer-checked:hidden"><?php esc_html_e( 'Off', 'dev-portfolio' ); ?></span>
+			</span>
+			<?php
+			break;
+
 		case 'email':
 			printf( '<input type="email" id="%s" name="%s" value="%s" placeholder="%s" class="%s">', esc_attr( $id ), esc_attr( $name ), esc_attr( $value ), esc_attr( $placeholder ), esc_attr( $input ) );
 			break;
@@ -321,7 +357,9 @@ function vincent_sanitize_options( $input ) {
 
 	foreach ( vincent_option_fields() as $section_key => $section ) {
 		// Unchecked checkboxes are not posted, so a missing key means "off".
-		$clean[ 'show_' . $section_key ] = ! empty( $input[ 'show_' . $section_key ] );
+		if ( vincent_is_page_section( $section ) ) {
+			$clean[ 'show_' . $section_key ] = ! empty( $input[ 'show_' . $section_key ] );
+		}
 
 		foreach ( $section['fields'] as $key => $field ) {
 			$raw = $input[ $key ] ?? '';
@@ -357,6 +395,11 @@ function vincent_sanitize_options( $input ) {
 
 				case 'image':
 					$clean[ $key ] = absint( $raw );
+					break;
+
+				case 'switch':
+					// Unchecked = not posted = "" (off). A second sanitize pass sees "1" for true.
+					$clean[ $key ] = '' !== $raw && '0' !== $raw;
 					break;
 
 				case 'email':
@@ -499,7 +542,9 @@ function vincent_render_options_page() {
 										<?php echo esc_html( $section['link']['label'] ); ?> <span aria-hidden="true">→</span>
 									</a>
 								<?php endif; ?>
-								<?php vincent_render_section_toggle( $section_key, $section['title'] ); ?>
+								<?php if ( vincent_is_page_section( $section ) ) : ?>
+									<?php vincent_render_section_toggle( $section_key, $section['title'] ); ?>
+								<?php endif; ?>
 							</div>
 						</div>
 
