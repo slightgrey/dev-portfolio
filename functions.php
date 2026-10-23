@@ -7,7 +7,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'VINCENT_VERSION', '1.0.0' );
+define( 'VINCENT_VERSION', '1.1.0' );
 define( 'VINCENT_DIR', get_template_directory() );
 define( 'VINCENT_URI', get_template_directory_uri() );
 
