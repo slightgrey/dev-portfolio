@@ -8,10 +8,6 @@ Developer Portfolio is an animated one-page portfolio theme for WordPress. The f
 
 ## Screenshots
 
-<!--
-  Add images to docs/screenshots/ using these filenames, then remove this comment's
-  opening and closing markers so they render. Suggested size: 1440px wide (desktop), 390px (mobile).
-
 <p align="center">
   <img src="docs/screenshots/front-hero.png" alt="Hero with the 3D planet" width="100%">
 </p>
@@ -33,9 +29,6 @@ Developer Portfolio is an animated one-page portfolio theme for WordPress. The f
 | Projects | Edit project |
 |---|---|
 | <img src="docs/screenshots/admin-projects.png" alt="Projects list"> | <img src="docs/screenshots/admin-project-edit.png" alt="Project details meta box"> |
--->
-
-_Screenshots coming soon._
 
 ## Features
 
