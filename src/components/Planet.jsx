@@ -1,8 +1,25 @@
 import { useRef } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
+import { DoubleSide, Vector2 } from "three";
 
-// Planet, moon and ring built from primitives (no external model), with the original intro timeline.
+// Built in code to match the original Planet.glb (not shipped: the source repo has no license).
+// Values measured from that file: sphere = glossy light grey non-metal, moon and ring = gold metal,
+// ring = flat band (radius 0.931–0.975, height 0.041) lying in the XZ plane, scaled 2×.
+const SPHERE = { color: "#e7e7e7", roughness: 0.21, metalness: 0.01, side: DoubleSide };
+const GOLD = { color: "#dba34f", roughness: 0.22, metalness: 1, side: DoubleSide };
+
+// Cross-section of the ring band (x = radius, y = height), with a slightly bevelled top edge.
+const RING_PROFILE = [
+  [0.931, 0],
+  [0.975, 0],
+  [0.975, 0.033],
+  [0.969, 0.041],
+  [0.937, 0.041],
+  [0.931, 0.033],
+  [0.931, 0],
+].map(([x, y]) => new Vector2(x, y));
+
 export function Planet(props) {
   const shapeContainer = useRef(null);
   const spheresContainer = useRef(null);
@@ -44,7 +61,7 @@ export function Planet(props) {
       <group ref={spheresContainer}>
         <mesh castShadow receiveShadow rotation={[0, 0, 0.741]}>
           <sphereGeometry args={[1, 96, 96]} />
-          <meshStandardMaterial color="#393632" roughness={0.35} metalness={0.45} />
+          <meshStandardMaterial {...SPHERE} />
         </mesh>
         <mesh
           castShadow
@@ -54,7 +71,7 @@ export function Planet(props) {
           scale={0.223}
         >
           <sphereGeometry args={[1, 48, 48]} />
-          <meshStandardMaterial color="#cfa355" roughness={0.25} metalness={0.85} />
+          <meshStandardMaterial {...GOLD} />
         </mesh>
       </group>
       <mesh
@@ -64,8 +81,9 @@ export function Planet(props) {
         rotation={[-0.124, 0.123, -0.778]}
         scale={2}
       >
-        <torusGeometry args={[0.8, 0.012, 24, 160]} />
-        <meshStandardMaterial color="#cfa355" roughness={0.25} metalness={0.85} />
+        {/* Lathe spins the profile around Y, so the band lies flat in XZ like the original. */}
+        <latheGeometry args={[RING_PROFILE, 192]} />
+        <meshStandardMaterial {...GOLD} />
       </mesh>
     </group>
   );
