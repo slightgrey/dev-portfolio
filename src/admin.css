@@ -1,0 +1,43 @@
+/*
+ * Appearance → Developer Portfolio settings page.
+ * No preflight (would restyle all of wp-admin) and a `tw:` prefix so utilities can't
+ * collide with core/plugin class names. `important` lets utilities beat wp-admin's
+ * unlayered selectors such as `.wrap h1` or `input[type=text]:focus`.
+ */
+@import "@fontsource-variable/outfit";
+@import "tailwindcss/theme.css" prefix(tw);
+@import "tailwindcss/utilities.css" prefix(tw) important;
+
+@source not "../dist";
+
+@theme {
+  --font-display: "Outfit Variable", ui-sans-serif, system-ui, sans-serif;
+  --color-primary: #e5e5e0;
+  --color-gold: #cfa355;
+  --color-DarkLava: #393632;
+  --color-SageGray: #8b8b73;
+}
+
+.vdp-admin .vdp-input:focus {
+  outline: none;
+}
+
+/* Fade the fields of a section that is switched off (still editable). */
+.vdp-admin section:has(.vdp-toggle:not(:checked)) .vdp-fields {
+  opacity: 0.4;
+}
+.vdp-admin section:has(.vdp-toggle:not(:checked)) .vdp-fields:focus-within {
+  opacity: 1;
+}
+
+/* Quote preview mirrors the front-end classes the quote field allows. */
+.vdp-quote-preview strong {
+  font-weight: 400;
+}
+.vdp-quote-preview .text-gold {
+  color: var(--tw-color-gold, #cfa355);
+}
+
+.vdp-admin :target {
+  scroll-margin-top: calc(var(--wp-admin--admin-bar--height, 32px) + 1.5rem);
+}

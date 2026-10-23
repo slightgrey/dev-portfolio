@@ -1,0 +1,12 @@
+/*
+Theme Name: Developer Portfolio
+Description: Animated one-page portfolio theme. The front page is a React app (GSAP, Lenis, React Three Fiber, Tailwind) fed by WordPress content; other templates are plain PHP.
+Version: 1.0.0
+Requires at least: 6.5
+Requires PHP: 8.0
+Text Domain: dev-portfolio
+License: GPL-2.0-or-later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+*/
+
+/* Styles are built by Vite into dist/. See src/site.css and src/index.css. */

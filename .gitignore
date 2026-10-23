@@ -1,0 +1,27 @@
+# JS dependencies
+node_modules/
+
+# Built assets (regenerate with: npm run build)
+dist/
+
+# Vite dev server marker (written by npm run dev)
+hot
+
+# Distribution zips
+*.zip
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Logs & env
+*.log
+.env
+.env.*
+!.env.example

@@ -1,0 +1,53 @@
+/* Styles for the PHP fallback templates (pages, posts, archives, 404). */
+@import "tailwindcss";
+@import "./theme.css";
+
+@layer components {
+  .vincent-prose > * + * {
+    margin-top: 1.25em;
+  }
+  .vincent-prose h2 {
+    @apply mt-12 text-4xl uppercase;
+  }
+  .vincent-prose h3 {
+    @apply mt-10 text-2xl uppercase;
+  }
+  .vincent-prose a {
+    @apply underline decoration-gold underline-offset-4;
+  }
+  .vincent-prose ul {
+    @apply list-disc pl-6;
+  }
+  .vincent-prose ol {
+    @apply list-decimal pl-6;
+  }
+  .vincent-prose blockquote {
+    @apply border-l-4 border-gold pl-6 italic;
+  }
+  .vincent-prose img {
+    @apply h-auto max-w-full rounded-2xl;
+  }
+  .vincent-prose pre {
+    @apply overflow-x-auto rounded-xl bg-black p-4 text-sm text-white;
+  }
+  .vincent-prose input[type="text"],
+  .vincent-prose input[type="email"],
+  .vincent-prose input[type="url"],
+  .vincent-prose textarea {
+    @apply w-full border-b-2 border-black/80 bg-transparent py-2;
+  }
+  .vincent-prose input[type="submit"] {
+    @apply mt-4 cursor-pointer rounded-full bg-black px-8 py-3 uppercase tracking-widest text-white;
+  }
+
+  .vincent-pagination .nav-links {
+    @apply flex gap-4;
+  }
+  .vincent-pagination .current {
+    @apply text-gold;
+  }
+
+  .site-header .current-menu-item > a {
+    @apply text-gold;
+  }
+}
