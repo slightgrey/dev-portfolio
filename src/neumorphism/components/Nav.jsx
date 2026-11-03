@@ -5,6 +5,9 @@ import { useData } from "../lib/data.js";
 const linkClass =
   "inline-flex min-h-11 items-center rounded-sm px-3.5 text-sm font-medium text-ink-soft no-underline transition-shadow duration-200 ease-out hover:text-ink hover:shadow-pressed-sm";
 
+// External links (the blog) open in a new tab.
+const linkTarget = (link) => (link.external ? { target: "_blank", rel: "noopener noreferrer" } : {});
+
 const Nav = () => {
   const { nm, sections, services } = useData();
   const [open, setOpen] = useState(false);
@@ -14,7 +17,7 @@ const Nav = () => {
     sections.services && services.length > 0 && { href: "#services", label: "Services" },
     sections.about && { href: "#about", label: "About" },
     sections.contact && { href: "#contact", label: "Contact" },
-    nm.blogUrl && { href: nm.blogUrl, label: "Blog" },
+    nm.blogUrl && { href: nm.blogUrl, label: "Blog", external: true },
   ].filter(Boolean);
 
   // Escape closes the menu and puts focus back on its button; so does growing past mobile width.
@@ -53,8 +56,9 @@ const Nav = () => {
 
           <nav aria-label="Primary" className="hidden items-center gap-1 md:flex">
             {links.map((link) => (
-              <a key={link.href} href={link.href} className={linkClass}>
+              <a key={link.href} href={link.href} className={linkClass} {...linkTarget(link)}>
                 {link.label}
+                {link.external && <span className="screen-reader-text"> (opens in a new tab)</span>}
               </a>
             ))}
             {sections.contact && (
@@ -85,8 +89,9 @@ const Nav = () => {
             <ul className="flex flex-col gap-1">
               {links.map((link) => (
                 <li key={link.href}>
-                  <a href={link.href} className={`${linkClass} flex w-full text-base`} onClick={close}>
+                  <a href={link.href} className={`${linkClass} flex w-full text-base`} onClick={close} {...linkTarget(link)}>
                     {link.label}
+                    {link.external && <span className="screen-reader-text"> (opens in a new tab)</span>}
                   </a>
                 </li>
               ))}
