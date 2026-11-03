@@ -165,6 +165,73 @@ function vincent_image( $attachment_id, $size ) {
 }
 
 /**
+ * Lines of a textarea option, trimmed, empty lines dropped.
+ *
+ * @param string $text Raw text.
+ * @return string[]
+ */
+function vincent_text_lines( $text ) {
+	return array_values( array_filter( array_map( 'trim', preg_split( '/\r\n|\r|\n/', (string) $text ) ) ) );
+}
+
+/**
+ * Extra content for the Neumorphism design (src/neumorphism/), reusing the shared settings where
+ * they map and the "Neumorphism design" card for the rest.
+ *
+ * @param array $data The shared payload from vincent_get_portfolio_data().
+ * @return array
+ */
+function vincent_get_neumorphism_data( $data ) {
+	$contact_lines = vincent_text_lines( $data['contact']['text'] );
+	// The CTA quote is HTML with decorative curly quotes; the design wants a plain sentence.
+	$cta_heading = preg_replace( array( '/\s+/u', '/^[\s“”"]+|[\s“”"]+$/u' ), array( ' ', '' ), vincent_plain_text( str_replace( '<br>', ' ', $data['cta']['quote'] ) ) );
+
+	return array(
+		'logo'      => (string) vincent_option( 'nm_logo' ),
+		'brand'     => (string) vincent_option( 'nm_brand' ),
+		'blogUrl'   => (string) vincent_option( 'nm_blog_url' ),
+		'hero'      => array(
+			'eyebrow'  => (string) vincent_option( 'nm_hero_eyebrow' ),
+			'title'    => implode( ' ', vincent_text_lines( $data['hero']['text'] ) ),
+			'lead'     => (string) vincent_option( 'nm_hero_lead' ),
+			'stack'    => array_values( (array) vincent_option( 'nm_stack' ) ),
+			'terminal' => (string) vincent_option( 'nm_terminal' ),
+		),
+		'services'  => array(
+			'eyebrow' => implode( ' · ', array_filter( array( $data['servicesHeader']['title'], $data['servicesHeader']['subTitle'] ) ) ),
+			'title'   => implode( ' ', vincent_text_lines( $data['servicesHeader']['text'] ) ),
+		),
+		'about'     => array(
+			'eyebrow' => implode( ' · ', array_filter( array( $data['about']['title'], $data['about']['subTitle'] ) ) ),
+			'title'   => (string) vincent_option( 'nm_about_heading' ),
+			'text'    => (string) vincent_option( 'nm_about_text' ),
+			'values'  => $data['cta']['values'],
+			'hobbies' => array_values( (array) vincent_option( 'nm_hobbies' ) ),
+		),
+		'cta'       => array(
+			'eyebrow' => $data['contact']['subTitle'],
+			'title'   => $cta_heading && ! preg_match( '/[.!?]$/u', $cta_heading ) ? $cta_heading . '.' : $cta_heading,
+		),
+		'contact'   => array(
+			'eyebrow'   => $data['contact']['title'],
+			'title'     => $contact_lines[0] ?? '',
+			'text'      => implode( ' ', array_slice( $contact_lines, 1 ) ),
+			'replyTime' => (string) vincent_option( 'nm_reply_time' ),
+			'topics'    => vincent_contact_topics(),
+		),
+		'footer'    => array(
+			'tagline' => (string) vincent_option( 'nm_footer_tagline' ),
+			'name'    => (string) vincent_option( 'nm_footer_name' ),
+		),
+		'form'      => array(
+			'endpoint' => rest_url( 'vincent/v1/contact' ),
+			'nonce'    => wp_create_nonce( 'wp_rest' ),
+		),
+		'recaptcha' => vincent_recaptcha_client_config(),
+	);
+}
+
+/**
  * Full payload for the React app. Shape mirrors the original constants file.
  *
  * @return array
@@ -180,7 +247,10 @@ function vincent_get_portfolio_data() {
 		}
 	}
 
+	$design = vincent_site_design();
+
 	$data = array(
+		'design'         => $design,
 		'sections'       => $sections,
 		'hero'           => array_merge(
 			vincent_section_header( 'hero' ),
@@ -220,6 +290,12 @@ function vincent_get_portfolio_data() {
 		),
 		'socials'        => array_values( (array) vincent_option( 'socials' ) ),
 	);
+
+	// The Neumorphism design has a contact form instead, and must never print the address.
+	if ( 'neumorphism' === $design ) {
+		unset( $data['contact']['email'] );
+		$data['neumorphism'] = vincent_get_neumorphism_data( $data );
+	}
 
 	/**
 	 * Filter the data passed to the React front page.

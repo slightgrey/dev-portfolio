@@ -81,6 +81,16 @@ function vincent_vite_style( $handle, $entry ) {
 	}
 }
 
+/**
+ * Front-page entry for the active design. Each design is its own bundle and stylesheet, so only
+ * one is ever loaded and their styles can't affect each other.
+ *
+ * @return string Manifest key / source path.
+ */
+function vincent_app_entry() {
+	return 'neumorphism' === vincent_site_design() ? 'src/neumorphism/main.jsx' : 'src/main.jsx';
+}
+
 add_action( 'wp_enqueue_scripts', 'vincent_enqueue_assets' );
 
 /**
@@ -99,14 +109,34 @@ function vincent_enqueue_assets() {
 
 	$manifest = vincent_vite_manifest();
 	$dist     = VINCENT_URI . '/dist/';
+	$entry    = vincent_app_entry();
 
-	if ( empty( $manifest['src/main.jsx'] ) ) {
+	if ( empty( $manifest[ $entry ] ) ) {
 		return;
 	}
-	foreach ( vincent_vite_css( 'src/main.jsx' ) as $i => $file ) {
+	foreach ( vincent_vite_css( $entry ) as $i => $file ) {
 		wp_enqueue_style( 'vincent-app-' . $i, $dist . $file, array(), null ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion -- hashed filename.
 	}
-	wp_enqueue_script_module( 'vincent-app', $dist . $manifest['src/main.jsx']['file'], array(), null );
+	wp_enqueue_script_module( 'vincent-app', $dist . $manifest[ $entry ]['file'], array(), null );
+
+	// Both designs share chunks (React), so fetch them alongside the entry instead of after it.
+	$preload = array();
+	foreach ( $manifest[ $entry ]['imports'] ?? array() as $import ) {
+		if ( ! empty( $manifest[ $import ]['file'] ) ) {
+			$preload[] = $dist . $manifest[ $import ]['file'];
+		}
+	}
+	if ( $preload ) {
+		add_action(
+			'wp_head',
+			static function () use ( $preload ) {
+				foreach ( $preload as $url ) {
+					printf( '<link rel="modulepreload" href="%s">' . "\n", esc_url( $url ) );
+				}
+			},
+			2
+		);
+	}
 }
 
 add_action( 'wp_head', 'vincent_vite_dev_tags', 1 );
@@ -134,8 +164,23 @@ window.$RefreshSig$ = () => (type) => type;
 window.__vite_plugin_react_preamble_installed__ = true;
 </script>
 <script type="module" src="<?php echo esc_url( $dev . '/@vite/client' ); ?>"></script>
-<script type="module" src="<?php echo esc_url( $dev . '/src/main.jsx' ); ?>"></script>
+<script type="module" src="<?php echo esc_url( $dev . '/' . vincent_app_entry() ); ?>"></script>
 	<?php
+}
+
+add_filter( 'body_class', 'vincent_design_body_class' );
+
+/**
+ * Mark the front page with the active design, so the Neumorphism stylesheet can style <body>.
+ *
+ * @param string[] $classes Body classes.
+ * @return string[]
+ */
+function vincent_design_body_class( $classes ) {
+	if ( is_front_page() && 'neumorphism' === vincent_site_design() ) {
+		$classes[] = 'design-neumorphism';
+	}
+	return $classes;
 }
 
 add_action( 'wp_head', 'vincent_print_portfolio_data', 0 );

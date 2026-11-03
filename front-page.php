@@ -13,6 +13,9 @@ $vincent_data = vincent_get_portfolio_data();
 $vincent_show = $vincent_data['sections'];
 ?>
 <div id="vincent-app"></div>
+<?php if ( 'neumorphism' === $vincent_data['design'] ) : ?>
+	<?php get_template_part( 'template-parts/neumorphism-noscript', null, array( 'data' => $vincent_data ) ); ?>
+<?php else : ?>
 <noscript>
 	<div class="px-6 py-16 md:px-10">
 		<?php if ( $vincent_show['hero'] ) : ?>
@@ -57,5 +60,6 @@ $vincent_show = $vincent_data['sections'];
 		<?php endif; ?>
 	</div>
 </noscript>
+<?php endif; ?>
 <?php
 get_footer();

@@ -2,6 +2,10 @@
 @import "tailwindcss";
 @import "./theme.css";
 
+/* The Neumorphism design has its own Tailwind build (src/neumorphism/). */
+@source not "./neumorphism";
+@source not "../template-parts/neumorphism-noscript.php";
+
 @layer components {
   .vincent-prose > * + * {
     margin-top: 1.25em;

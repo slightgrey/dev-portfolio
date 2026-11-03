@@ -15,6 +15,8 @@ require VINCENT_DIR . '/inc/setup.php';
 require VINCENT_DIR . '/inc/post-types.php';
 require VINCENT_DIR . '/inc/options.php';
 require VINCENT_DIR . '/inc/data.php';
+require VINCENT_DIR . '/inc/recaptcha.php';
+require VINCENT_DIR . '/inc/contact.php';
 require VINCENT_DIR . '/inc/vite.php';
 require VINCENT_DIR . '/inc/seed.php';
 require VINCENT_DIR . '/inc/minify.php';

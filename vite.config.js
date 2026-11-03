@@ -30,7 +30,7 @@ export default defineConfig({
   publicDir: false,
   // No index.html, so tell the dep optimizer where to crawl; otherwise it re-optimizes mid-load (504s).
   optimizeDeps: {
-    entries: ["src/main.jsx"],
+    entries: ["src/main.jsx", "src/neumorphism/main.jsx"],
   },
   server: {
     host: "localhost",
@@ -44,7 +44,7 @@ export default defineConfig({
     emptyOutDir: true,
     manifest: true,
     rollupOptions: {
-      input: ["src/main.jsx", "src/site.css", "src/admin.css"],
+      input: ["src/main.jsx", "src/neumorphism/main.jsx", "src/site.css", "src/admin.css"],
     },
   },
 });

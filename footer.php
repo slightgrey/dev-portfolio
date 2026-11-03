@@ -11,7 +11,8 @@ defined( 'ABSPATH' ) || exit;
 <?php if ( ! is_front_page() ) : ?>
 	<footer class="site-footer mt-24 rounded-t-4xl bg-black px-6 py-16 font-light text-white md:px-10">
 		<div class="flex flex-col justify-between gap-10 md:flex-row">
-			<?php $vincent_email = vincent_option( 'email' ); ?>
+			<?php // The Neumorphism design keeps the address off the site; visitors use its contact form. ?>
+			<?php $vincent_email = 'neumorphism' === vincent_site_design() ? '' : vincent_option( 'email' ); ?>
 			<?php if ( $vincent_email ) : ?>
 				<div>
 					<p class="uppercase tracking-wider text-white/50"><?php esc_html_e( 'E-mail', 'dev-portfolio' ); ?></p>

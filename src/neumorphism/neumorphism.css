@@ -1,0 +1,213 @@
+/*
+ * Neumorphism design (design/HANDOFF.md). A separate entry from src/index.css: it is only loaded
+ * when Appearance → Developer Portfolio → Site design is "Neumorphism", and it scans only its own
+ * files, so none of this can reach the current design (and vice versa).
+ */
+@import "@fontsource/jetbrains-mono/latin-400.css";
+@import "@fontsource/jetbrains-mono/latin-500.css";
+@import "tailwindcss" source(none);
+
+@source "./";
+@source "../../template-parts/neumorphism-noscript.php";
+
+@theme {
+  --color-ground: #e8e8e8; /* tertiary: page + every surface */
+  --color-accent: #c8e0f4; /* primary: buttons, focus */
+  --color-accent-hover: #b8d4ec;
+  --color-tint: #f5e0e8; /* secondary: fills only, never text */
+  --color-ink: #2b2b2b; /* text */
+  --color-ink-soft: #595959; /* secondary text, labels */
+  --color-line: #d4d4d4; /* field borders */
+  --color-error: #b3261e; /* 6.0:1 on ground */
+
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  --radius-sm: 14px; /* buttons, cards, inputs */
+  --radius-md: 28px; /* panels */
+  --radius-lg: 42px; /* hero / about slabs */
+
+  --shadow-raised: -5px -5px 15px rgba(255, 255, 255, 0.8), 5px 5px 15px rgba(0, 0, 0, 0.12);
+  --shadow-pressed: inset -5px -5px 15px rgba(255, 255, 255, 0.8), inset 5px 5px 15px rgba(0, 0, 0, 0.12);
+  --shadow-pressed-sm: inset -3px -3px 8px rgba(255, 255, 255, 0.8), inset 3px 3px 8px rgba(0, 0, 0, 0.1);
+  --shadow-card: 0 2px 12px rgba(0, 0, 0, 0.06);
+
+  --container-site: 1280px;
+}
+
+@layer base {
+  html:has(> body.design-neumorphism) {
+    scroll-behavior: smooth;
+  }
+
+  body.design-neumorphism {
+    background: var(--color-ground);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Shadow alone never marks focus: every interactive element gets a visible ring. */
+  [data-design="neumorphism"] :focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 3px;
+  }
+
+  /* Anchored sections clear the sticky nav (and the admin bar). */
+  [data-design="neumorphism"] section[id] {
+    scroll-margin-top: calc(96px + var(--wp-admin--admin-bar--height, 0px));
+  }
+
+  /* theme.css isn't loaded in this design, so repeat the accessibility helpers. */
+  .design-neumorphism .screen-reader-text {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  .design-neumorphism .skip-link:focus {
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    z-index: 1000;
+    width: auto;
+    height: auto;
+    clip: auto;
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius-sm);
+    background: var(--color-accent);
+    color: var(--color-ink);
+  }
+
+  /* The v3 badge would cover the page corner; the form shows Google's attribution text instead. */
+  .design-neumorphism .grecaptcha-badge {
+    visibility: hidden;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html:has(> body.design-neumorphism) {
+      scroll-behavior: auto;
+    }
+  }
+}
+
+@utility nm-raised {
+  background-color: var(--color-ground);
+  box-shadow: var(--shadow-raised);
+}
+
+@utility nm-pressed {
+  background-color: var(--color-ground);
+  box-shadow: var(--shadow-pressed);
+}
+
+@utility nm-label {
+  font-size: 12px;
+  line-height: 17px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-ink-soft);
+}
+
+@utility nm-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 0 22px;
+  border-radius: var(--radius-sm);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-ink);
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    box-shadow 150ms ease-out,
+    transform 150ms ease-out,
+    background-color 200ms ease-out;
+  &:active {
+    transform: translateY(1px);
+  }
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+}
+
+@utility nm-btn-primary {
+  background-color: var(--color-accent);
+  box-shadow: var(--shadow-raised);
+  &:hover {
+    background-color: var(--color-accent-hover);
+  }
+  &:active {
+    box-shadow: inset -5px -5px 15px rgba(255, 255, 255, 0.6), inset 5px 5px 15px rgba(0, 0, 0, 0.12);
+  }
+}
+
+@utility nm-btn-ghost {
+  border: 1.5px solid var(--color-ink-soft);
+  background-color: transparent;
+  &:hover {
+    background-color: #f0f0f0;
+  }
+}
+
+@utility nm-field {
+  display: block;
+  width: 100%;
+  min-height: 48px;
+  padding: 0 16px;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-ground);
+  box-shadow: var(--shadow-pressed);
+  font: inherit;
+  font-size: 15px;
+  color: var(--color-ink);
+  outline: none;
+  transition:
+    box-shadow 150ms ease-out,
+    border-color 150ms ease-out;
+  &::placeholder {
+    color: #6e6e6e;
+  }
+  /* Focus: darker border plus a 2px accent ring offset 2px (the ring alone is too faint). */
+  &:focus,
+  &:focus-visible {
+    outline: none;
+    border-color: var(--color-ink-soft);
+    box-shadow:
+      var(--shadow-pressed),
+      0 0 0 2px var(--color-ground),
+      0 0 0 4px var(--color-accent),
+      0 0 0 5px var(--color-ink-soft);
+  }
+  &[aria-invalid="true"] {
+    border-color: var(--color-error);
+  }
+}
+
+/* Entry animation (see lib/useReveal.js): fade and rise 16px. */
+@utility nm-reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity 420ms ease-out,
+    transform 420ms ease-out;
+  transition-delay: var(--nm-delay, 0ms);
+  &.is-visible {
+    opacity: 1;
+    transform: none;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}

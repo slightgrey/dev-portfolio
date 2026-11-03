@@ -1,6 +1,10 @@
 @import "tailwindcss";
 @import "./theme.css";
 
+/* The Neumorphism design is a separate bundle with its own Tailwind build (src/neumorphism/). */
+@source not "./neumorphism";
+@source not "../template-parts/neumorphism-noscript.php";
+
 .cta-quote strong {
   font-weight: 400;
 }

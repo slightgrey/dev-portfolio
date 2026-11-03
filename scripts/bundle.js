@@ -58,6 +58,7 @@ archive.pipe(output);
 // Folders to include. src/, node_modules/ and scripts/ are build-time only.
 const includes = [
   { type: 'dir', src: 'inc',       dest: `${themeDir}/inc` },
+  { type: 'dir', src: 'template-parts', dest: `${themeDir}/template-parts` },
   { type: 'dir', src: 'assets',    dest: `${themeDir}/assets` },
   { type: 'dir', src: 'dist',      dest: `${themeDir}/dist` },
   { type: 'dir', src: 'languages', dest: `${themeDir}/languages` },

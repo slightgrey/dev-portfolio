@@ -13,13 +13,33 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Field definitions, grouped by section. Type drives rendering and sanitizing.
  *
- * Types: text, email, textarea, lines (one item per line), pairs (Name | value per line), html, image.
- * Optional field keys: help, placeholder. Optional section keys: description, icon (dashicon), link.
+ * Types: text, email, url, password, textarea, lines (one item per line), pairs (Name | value per line),
+ * html, image, switch, select (needs `choices`: value => label).
+ * Optional field keys: help, placeholder. Optional section keys: description, icon (dashicon), link, toggle.
  *
  * @return array<string, array{title: string, fields: array<string, array>}>
  */
 function vincent_option_fields() {
 	return array(
+		// Site-wide settings, not a front-page section: no Shown/Hidden switch.
+		'design'          => array(
+			'title'       => __( 'Site design', 'dev-portfolio' ),
+			'description' => __( 'Which homepage design visitors see. Both designs read the content on this page.', 'dev-portfolio' ),
+			'icon'        => 'dashicons-art',
+			'toggle'      => false,
+			'fields'      => array(
+				'site_design' => array(
+					'type'    => 'select',
+					'label'   => __( 'Homepage design', 'dev-portfolio' ),
+					'choices' => array(
+						'current'     => __( 'Current', 'dev-portfolio' ),
+						'neumorphism' => __( 'Neumorphism', 'dev-portfolio' ),
+					),
+					'help'    => __( 'Current: the animated dark design. Neumorphism: the soft, light design with a built-in contact form; your e-mail address is then never shown on the site.', 'dev-portfolio' ),
+					'default' => 'current',
+				),
+			),
+		),
 		'hero'            => array(
 			'title'       => __( 'Hero', 'dev-portfolio' ),
 			'description' => __( 'The first screen: your name in huge type over the 3D planet.', 'dev-portfolio' ),
@@ -97,6 +117,43 @@ function vincent_option_fields() {
 				'socials'          => array( 'type' => 'pairs', 'label' => __( 'Social links', 'dev-portfolio' ), 'help' => __( 'One per line: Name | https://url', 'dev-portfolio' ), 'default' => array( array( 'name' => 'GitHub', 'href' => 'https://github.com/' ), array( 'name' => 'LinkedIn', 'href' => 'https://www.linkedin.com/' ) ) ),
 			),
 		),
+		'neumorphism'     => array(
+			'title'       => __( 'Neumorphism design', 'dev-portfolio' ),
+			'description' => __( 'Extra text used only by the Neumorphism design. It also uses the hero intro, service cards, section eyebrows, values, contact text and social links above.', 'dev-portfolio' ),
+			'icon'        => 'dashicons-admin-appearance',
+			'toggle'      => false,
+			'fields'      => array(
+				'nm_logo'           => array( 'type' => 'text', 'label' => __( 'Logo initials', 'dev-portfolio' ), 'default' => 'VL' ),
+				'nm_brand'          => array( 'type' => 'text', 'label' => __( 'Brand name', 'dev-portfolio' ), 'default' => 'vince.layte' ),
+				'nm_hero_eyebrow'   => array( 'type' => 'text', 'label' => __( 'Hero eyebrow', 'dev-portfolio' ), 'default' => 'Web of D · Code for food' ),
+				'nm_blog_url'       => array( 'type' => 'url', 'label' => __( 'Blog URL', 'dev-portfolio' ), 'help' => __( 'Adds a Blog link to the menu. Leave empty to hide it.', 'dev-portfolio' ), 'placeholder' => 'https://', 'default' => '' ),
+				'nm_hero_lead'      => array( 'type' => 'textarea', 'label' => __( 'Hero text', 'dev-portfolio' ), 'help' => __( 'Shown under the headline. The headline itself is the Hero intro text.', 'dev-portfolio' ), 'default' => 'WordPress, WooCommerce and React, from custom plugins and headless front ends to performance and security work.' ),
+				'nm_stack'          => array( 'type' => 'lines', 'label' => __( 'Stack chips', 'dev-portfolio' ), 'help' => __( 'One per line. Shown in the panel next to the headline.', 'dev-portfolio' ), 'default' => array( 'PHP', 'WordPress', 'React', 'JavaScript', 'APIs', 'Frontends', 'Databases', 'Architecture', 'Development', 'Scalability' ) ),
+				'nm_terminal'       => array( 'type' => 'text', 'label' => __( 'Terminal line', 'dev-portfolio' ), 'help' => __( 'Shown after a $ prompt under the stack chips.', 'dev-portfolio' ), 'default' => 'just imagine, I code' ),
+				'nm_reply_time'     => array( 'type' => 'text', 'label' => __( 'Reply time', 'dev-portfolio' ), 'help' => __( 'Completes “I usually reply within …” under the contact form. Leave empty to hide.', 'dev-portfolio' ), 'default' => '1–2 business days' ),
+				'nm_about_heading'  => array( 'type' => 'text', 'label' => __( 'About heading', 'dev-portfolio' ), 'default' => 'Passionate about clean architecture, from prototype to production.' ),
+				'nm_about_text'     => array( 'type' => 'textarea', 'label' => __( 'About text', 'dev-portfolio' ), 'default' => 'Obsessed with building fast, intuitive sites, from pixel-perfect React UIs to solid WordPress back ends. I build scalable, high-performance solutions that hold up as your business grows.' ),
+				'nm_hobbies'        => array( 'type' => 'lines', 'label' => __( 'When I’m not shipping', 'dev-portfolio' ), 'help' => __( 'One per line, each with an icon.', 'dev-portfolio' ), 'default' => array( 'Experimenting with new tools and libraries', 'Writing about what I learn', 'Listening to music while the build runs' ) ),
+				'nm_footer_tagline' => array( 'type' => 'text', 'label' => __( 'Footer tagline', 'dev-portfolio' ), 'default' => 'Just imagine, I code.' ),
+				'nm_footer_name'    => array( 'type' => 'text', 'label' => __( 'Copyright name', 'dev-portfolio' ), 'default' => 'Vince Layte' ),
+			),
+		),
+		'recaptcha'       => array(
+			'title'       => __( 'reCAPTCHA', 'dev-portfolio' ),
+			'description' => __( 'Spam protection for the Neumorphism contact form, guest comments and the login screens. Only enforced when both keys are set. Locked out? Add define( \'VINCENT_RECAPTCHA_DISABLED\', true ); to wp-config.php.', 'dev-portfolio' ),
+			'icon'        => 'dashicons-shield',
+			'toggle'      => false,
+			'fields'      => array(
+				'recaptcha_version'      => array( 'type' => 'select', 'label' => __( 'Version', 'dev-portfolio' ), 'choices' => array( 'v3' => __( 'Invisible (v3)', 'dev-portfolio' ), 'v2' => __( 'Checkbox (v2)', 'dev-portfolio' ) ), 'help' => __( 'Must match the key type you created at google.com/recaptcha/admin.', 'dev-portfolio' ), 'default' => vincent_legacy_recaptcha_option( 'vl_cf_recaptcha_version', 'v3' ) ),
+				'recaptcha_site'         => array( 'type' => 'text', 'label' => __( 'Site key', 'dev-portfolio' ), 'default' => vincent_legacy_recaptcha_option( 'vl_cf_recaptcha_site', '' ) ),
+				'recaptcha_secret'       => array( 'type' => 'password', 'label' => __( 'Secret key', 'dev-portfolio' ), 'help' => __( 'Leave blank to turn reCAPTCHA off on every form.', 'dev-portfolio' ), 'default' => vincent_legacy_recaptcha_option( 'vl_cf_recaptcha_secret', '' ) ),
+				'recaptcha_contact'      => array( 'type' => 'switch', 'label' => __( 'Contact form', 'dev-portfolio' ), 'help' => __( 'Everyone must pass reCAPTCHA to send the Neumorphism contact form.', 'dev-portfolio' ), 'default' => true ),
+				'recaptcha_comments'     => array( 'type' => 'switch', 'label' => __( 'Comments', 'dev-portfolio' ), 'help' => __( 'Guests must pass reCAPTCHA to comment. Logged-in users skip the check.', 'dev-portfolio' ), 'default' => '1' === vincent_legacy_recaptcha_option( 'vl_recaptcha_comments', '1' ) ),
+				'recaptcha_login'        => array( 'type' => 'switch', 'label' => __( 'Login form', 'dev-portfolio' ), 'help' => __( 'Test it in a private window before logging out.', 'dev-portfolio' ), 'default' => '1' === vincent_legacy_recaptcha_option( 'vl_recaptcha_login', '0' ) ),
+				'recaptcha_register'     => array( 'type' => 'switch', 'label' => __( 'Registration form', 'dev-portfolio' ), 'help' => get_option( 'users_can_register' ) ? '' : __( 'Registration is currently off in Settings → General.', 'dev-portfolio' ), 'default' => '1' === vincent_legacy_recaptcha_option( 'vl_recaptcha_register', '0' ) ),
+				'recaptcha_lostpassword' => array( 'type' => 'switch', 'label' => __( 'Lost password form', 'dev-portfolio' ), 'default' => '1' === vincent_legacy_recaptcha_option( 'vl_recaptcha_lostpassword', '0' ) ),
+			),
+		),
 		// Site-wide settings, not a front-page section: no Shown/Hidden switch.
 		'performance'     => array(
 			'title'       => __( 'Performance', 'dev-portfolio' ),
@@ -111,6 +168,27 @@ function vincent_option_fields() {
 			),
 		),
 	);
+}
+
+/**
+ * A reCAPTCHA setting saved by the vincelayte React theme, used as this theme's default so
+ * existing keys and switches carry over without re-entering them.
+ *
+ * @param string $name    Legacy option name.
+ * @param string $default Fallback.
+ * @return string
+ */
+function vincent_legacy_recaptcha_option( $name, $default ) {
+	return (string) get_option( $name, $default );
+}
+
+/**
+ * Active homepage design: "current" or "neumorphism".
+ *
+ * @return string
+ */
+function vincent_site_design() {
+	return 'neumorphism' === vincent_option( 'site_design' ) ? 'neumorphism' : 'current';
 }
 
 /**
@@ -283,6 +361,22 @@ function vincent_render_option_field( $key, $field ) {
 			<?php
 			break;
 
+		case 'select':
+			printf( '<select id="%s" name="%s" class="%s">', esc_attr( $id ), esc_attr( $name ), esc_attr( $input ) );
+			foreach ( $field['choices'] as $choice => $choice_label ) {
+				printf( '<option value="%s" %s>%s</option>', esc_attr( $choice ), selected( $value, $choice, false ), esc_html( $choice_label ) );
+			}
+			echo '</select>';
+			break;
+
+		case 'password':
+			printf( '<input type="password" id="%s" name="%s" value="%s" autocomplete="off" class="%s">', esc_attr( $id ), esc_attr( $name ), esc_attr( $value ), esc_attr( $input ) );
+			break;
+
+		case 'url':
+			printf( '<input type="url" id="%s" name="%s" value="%s" placeholder="%s" class="%s">', esc_attr( $id ), esc_attr( $name ), esc_attr( $value ), esc_attr( $placeholder ), esc_attr( $input ) );
+			break;
+
 		case 'email':
 			printf( '<input type="email" id="%s" name="%s" value="%s" placeholder="%s" class="%s">', esc_attr( $id ), esc_attr( $name ), esc_attr( $value ), esc_attr( $placeholder ), esc_attr( $input ) );
 			break;
@@ -404,6 +498,14 @@ function vincent_sanitize_options( $input ) {
 
 				case 'email':
 					$clean[ $key ] = sanitize_email( $raw );
+					break;
+
+				case 'url':
+					$clean[ $key ] = esc_url_raw( $raw );
+					break;
+
+				case 'select':
+					$clean[ $key ] = array_key_exists( $raw, $field['choices'] ) ? $raw : $field['default'];
 					break;
 
 				default:
