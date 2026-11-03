@@ -15,7 +15,9 @@ defined( 'ABSPATH' ) || exit;
  *
  * Types: text, email, url, password, textarea, lines (one item per line), pairs (Name | value per line),
  * html, image, switch, select (needs `choices`: value => label).
- * Optional field keys: help, placeholder. Optional section keys: description, icon (dashicon), link, toggle.
+ * Optional field keys: help, placeholder, designs. Optional section keys: description, icon (dashicon), link,
+ * toggle, designs. `designs` lists the Site designs that use a section or field (default: all); the
+ * settings page greys out and locks the rest while another design is selected.
  *
  * @return array<string, array{title: string, fields: array<string, array>}>
  */
@@ -45,16 +47,17 @@ function vincent_option_fields() {
 			'description' => __( 'The first screen: your name in huge type over the 3D planet.', 'dev-portfolio' ),
 			'icon'        => 'dashicons-admin-home',
 			'fields'      => array(
-				'hero_subtitle' => array( 'type' => 'text', 'label' => __( 'Eyebrow', 'dev-portfolio' ), 'help' => __( 'Small spaced-out line above the title.', 'dev-portfolio' ), 'default' => '404 No Bugs Found' ),
-				'hero_title'    => array( 'type' => 'text', 'label' => __( 'Title', 'dev-portfolio' ), 'help' => __( 'Usually your name. Each word wraps onto its own line on mobile.', 'dev-portfolio' ), 'default' => 'Vincent' ),
+				'hero_subtitle' => array( 'type' => 'text', 'designs' => array( 'current' ), 'label' => __( 'Eyebrow', 'dev-portfolio' ), 'help' => __( 'Small spaced-out line above the title.', 'dev-portfolio' ), 'default' => '404 No Bugs Found' ),
+				'hero_title'    => array( 'type' => 'text', 'designs' => array( 'current' ), 'label' => __( 'Title', 'dev-portfolio' ), 'help' => __( 'Usually your name. Each word wraps onto its own line on mobile.', 'dev-portfolio' ), 'default' => 'Vincent' ),
 				'hero_text'     => array( 'type' => 'textarea', 'label' => __( 'Intro text', 'dev-portfolio' ), 'help' => __( 'Each line animates in separately.', 'dev-portfolio' ), 'default' => "I help growing brands and startups\nstand out with fast, crafted\nwebsites and web apps" ),
-				'hero_scroll'   => array( 'type' => 'text', 'label' => __( 'Scroll hint', 'dev-portfolio' ), 'help' => __( 'Text circling the scroll-down button. Leave empty to hide the button.', 'dev-portfolio' ), 'default' => 'Scroll to explore' ),
+				'hero_scroll'   => array( 'type' => 'text', 'designs' => array( 'current' ), 'label' => __( 'Scroll hint', 'dev-portfolio' ), 'help' => __( 'Text circling the scroll-down button. Leave empty to hide the button.', 'dev-portfolio' ), 'default' => 'Scroll to explore' ),
 			),
 		),
 		'service_summary' => array(
 			'title'       => __( 'Scrolling words', 'dev-portfolio' ),
 			'description' => __( 'Large words that drift sideways as visitors scroll past.', 'dev-portfolio' ),
 			'icon'        => 'dashicons-editor-textcolor',
+			'designs'     => array( 'current' ),
 			'fields'      => array(
 				'service_summary' => array( 'type' => 'lines', 'label' => __( 'Rows', 'dev-portfolio' ), 'help' => __( 'One row per line. Separate words in a row with | to add gold dividers.', 'dev-portfolio' ), 'default' => array( 'Architecture', 'Development | Deployment', 'APIs | Frontends | Scalability', 'Databases' ) ),
 			),
@@ -77,15 +80,16 @@ function vincent_option_fields() {
 			'fields'      => array(
 				'about_subtitle' => array( 'type' => 'text', 'label' => __( 'Eyebrow', 'dev-portfolio' ), 'default' => 'Code with purpose, built to scale' ),
 				'about_title'    => array( 'type' => 'text', 'label' => __( 'Title', 'dev-portfolio' ), 'default' => 'About' ),
-				'about_text'     => array( 'type' => 'textarea', 'label' => __( 'Header text', 'dev-portfolio' ), 'help' => __( 'Each line animates in separately.', 'dev-portfolio' ), 'default' => "Passionate about clean architecture,\nI build scalable, high-performance solutions\nfrom prototype to production" ),
-				'about_body'     => array( 'type' => 'textarea', 'label' => __( 'Body', 'dev-portfolio' ), 'help' => __( 'Shown next to the portrait. Each line animates in separately; emoji are fine.', 'dev-portfolio' ), 'default' => "Obsessed with building fast, intuitive sites, from pixel-perfect React UIs to solid WordPress back ends.\nWhen I'm not shipping:\n⚡ Experimenting with new tools and libraries\n📚 Writing about what I learn\n🎧 Listening to music while the build runs" ),
-				'about_image'    => array( 'type' => 'image', 'label' => __( 'Portrait', 'dev-portfolio' ), 'help' => __( 'Portrait orientation works best. Without one, a gradient is shown.', 'dev-portfolio' ), 'default' => 0 ),
+				'about_text'     => array( 'type' => 'textarea', 'designs' => array( 'current' ), 'label' => __( 'Header text', 'dev-portfolio' ), 'help' => __( 'Each line animates in separately.', 'dev-portfolio' ), 'default' => "Passionate about clean architecture,\nI build scalable, high-performance solutions\nfrom prototype to production" ),
+				'about_body'     => array( 'type' => 'textarea', 'designs' => array( 'current' ), 'label' => __( 'Body', 'dev-portfolio' ), 'help' => __( 'Shown next to the portrait. Each line animates in separately; emoji are fine.', 'dev-portfolio' ), 'default' => "Obsessed with building fast, intuitive sites, from pixel-perfect React UIs to solid WordPress back ends.\nWhen I'm not shipping:\n⚡ Experimenting with new tools and libraries\n📚 Writing about what I learn\n🎧 Listening to music while the build runs" ),
+				'about_image'    => array( 'type' => 'image', 'designs' => array( 'current' ), 'label' => __( 'Portrait', 'dev-portfolio' ), 'help' => __( 'Portrait orientation works best. Without one, a gradient is shown.', 'dev-portfolio' ), 'default' => 0 ),
 			),
 		),
 		'works'           => array(
 			'title'       => __( 'Works', 'dev-portfolio' ),
 			'description' => __( 'Header above the project list with hover previews.', 'dev-portfolio' ),
 			'icon'        => 'dashicons-portfolio',
+			'designs'     => array( 'current' ),
 			'link'        => array( 'url' => admin_url( 'edit.php?post_type=vincent_project' ), 'label' => __( 'Manage projects', 'dev-portfolio' ) ),
 			'fields'      => array(
 				'works_subtitle' => array( 'type' => 'text', 'label' => __( 'Eyebrow', 'dev-portfolio' ), 'default' => 'Logic meets aesthetics, seamlessly' ),
@@ -99,7 +103,7 @@ function vincent_option_fields() {
 			'icon'        => 'dashicons-format-quote',
 			'fields'      => array(
 				'values_marquee' => array( 'type' => 'lines', 'label' => __( 'Values marquee', 'dev-portfolio' ), 'help' => __( 'One word or phrase per line.', 'dev-portfolio' ), 'default' => array( 'Innovation', 'Precision', 'Trust', 'Collaboration', 'Excellence' ) ),
-				'cta_marquee'    => array( 'type' => 'text', 'label' => __( 'Bottom marquee text', 'dev-portfolio' ), 'help' => __( 'Repeated across the outlined marquee.', 'dev-portfolio' ), 'default' => 'contact me' ),
+				'cta_marquee'    => array( 'type' => 'text', 'designs' => array( 'current' ), 'label' => __( 'Bottom marquee text', 'dev-portfolio' ), 'help' => __( 'Repeated across the outlined marquee.', 'dev-portfolio' ), 'default' => 'contact me' ),
 				'cta_quote'      => array( 'type' => 'html', 'label' => __( 'Quote', 'dev-portfolio' ), 'help' => __( 'Allowed tags: <br>, <em>, <strong>, and <span class="text-gold"> for gold words.', 'dev-portfolio' ), 'default' => '“ Let’s build a <br><strong>memorable</strong> &amp; <em>inspiring</em> <br>website <span class="text-gold">together</span> ”' ),
 			),
 		),
@@ -112,8 +116,8 @@ function vincent_option_fields() {
 				'contact_title'    => array( 'type' => 'text', 'label' => __( 'Title', 'dev-portfolio' ), 'default' => 'Contact' ),
 				'contact_text'     => array( 'type' => 'textarea', 'label' => __( 'Text', 'dev-portfolio' ), 'help' => __( 'Each line animates in separately.', 'dev-portfolio' ), 'default' => "Got a question or a project idea?\nI'd love to hear from you and talk it through." ),
 				'email'            => array( 'type' => 'email', 'label' => __( 'E-mail', 'dev-portfolio' ), 'placeholder' => 'you@example.com', 'default' => 'hello@example.com' ),
-				'phone'            => array( 'type' => 'text', 'label' => __( 'Phone', 'dev-portfolio' ), 'help' => __( 'Leave empty to hide.', 'dev-portfolio' ), 'placeholder' => '+1 555 010 0000', 'default' => '' ),
-				'contact_marquee'  => array( 'type' => 'text', 'label' => __( 'Marquee text', 'dev-portfolio' ), 'help' => __( 'Repeated along the bottom of the page.', 'dev-portfolio' ), 'default' => 'just imagine, I code' ),
+				'phone'            => array( 'type' => 'text', 'designs' => array( 'current' ), 'label' => __( 'Phone', 'dev-portfolio' ), 'help' => __( 'Leave empty to hide.', 'dev-portfolio' ), 'placeholder' => '+1 555 010 0000', 'default' => '' ),
+				'contact_marquee'  => array( 'type' => 'text', 'designs' => array( 'current' ), 'label' => __( 'Marquee text', 'dev-portfolio' ), 'help' => __( 'Repeated along the bottom of the page.', 'dev-portfolio' ), 'default' => 'just imagine, I code' ),
 				'socials'          => array( 'type' => 'pairs', 'label' => __( 'Social links', 'dev-portfolio' ), 'help' => __( 'One per line: Name | https://url', 'dev-portfolio' ), 'default' => array( array( 'name' => 'GitHub', 'href' => 'https://github.com/' ), array( 'name' => 'LinkedIn', 'href' => 'https://www.linkedin.com/' ) ) ),
 			),
 		),
@@ -121,6 +125,7 @@ function vincent_option_fields() {
 			'title'       => __( 'Neumorphism design', 'dev-portfolio' ),
 			'description' => __( 'Extra text used only by the Neumorphism design. It also uses the hero intro, service cards, section eyebrows, values, contact text and social links above.', 'dev-portfolio' ),
 			'icon'        => 'dashicons-admin-appearance',
+			'designs'     => array( 'neumorphism' ),
 			'toggle'      => false,
 			'fields'      => array(
 				'nm_logo'           => array( 'type' => 'text', 'label' => __( 'Logo initials', 'dev-portfolio' ), 'default' => 'VL' ),
@@ -189,6 +194,48 @@ function vincent_legacy_recaptcha_option( $name, $default ) {
  */
 function vincent_site_design() {
 	return 'neumorphism' === vincent_option( 'site_design' ) ? 'neumorphism' : 'current';
+}
+
+/**
+ * Attribute marking a settings card or field as used by only some designs; empty when every design
+ * uses it. The settings page's CSS and script dim and lock it while another design is selected.
+ *
+ * @param array  $item Section or field definition from vincent_option_fields().
+ * @param string $attr Attribute name.
+ * @return string
+ */
+function vincent_design_attr( $item, $attr = 'data-vdp-designs' ) {
+	if ( empty( $item['designs'] ) ) {
+		return '';
+	}
+	return sprintf( ' %s="%s"', $attr, esc_attr( implode( ' ', $item['designs'] ) ) );
+}
+
+/**
+ * "Only used by the … design" note, shown while the item is dimmed.
+ *
+ * @param array $item Section or field definition.
+ */
+function vincent_design_note( $item ) {
+	if ( empty( $item['designs'] ) ) {
+		return;
+	}
+	$choices = vincent_option_fields()['design']['fields']['site_design']['choices'];
+	$names   = array_map(
+		static function ( $design ) use ( $choices ) {
+			return $choices[ $design ] ?? $design;
+		},
+		$item['designs']
+	);
+	?>
+	<p class="vdp-design-note tw:m-0 tw:mt-2 tw:items-center tw:gap-1 tw:text-xs tw:font-medium tw:text-amber-700">
+		<span class="dashicons dashicons-lock tw:size-4 tw:text-base tw:leading-4" aria-hidden="true"></span>
+		<?php
+		/* translators: %s: design name, e.g. "Current". */
+		printf( esc_html__( 'Only used by the %s design. Your text is kept for when you switch back.', 'dev-portfolio' ), esc_html( implode( ', ', $names ) ) );
+		?>
+	</p>
+	<?php
 }
 
 /**
@@ -602,13 +649,20 @@ function vincent_render_options_page() {
 				<?php foreach ( array_keys( $sections ) as $section_key ) : ?>
 					.vdp-admin:has(#vincent_show_<?php echo esc_attr( $section_key ); ?>:not(:checked)) .vdp-nav-<?php echo esc_attr( $section_key ); ?> { opacity: .4; }
 				<?php endforeach; ?>
+				/* Settings the selected Site design doesn't use: dimmed here, locked by the script after the form. */
+				.vdp-design-note { display: none; }
+				<?php foreach ( array_keys( vincent_option_fields()['design']['fields']['site_design']['choices'] ) as $vincent_design ) : ?>
+					.vdp-admin:has(#vincent_site_design option[value="<?php echo esc_attr( $vincent_design ); ?>"]:checked) [data-vdp-designs]:not([data-vdp-designs~="<?php echo esc_attr( $vincent_design ); ?>"]),
+					.vdp-admin:has(#vincent_site_design option[value="<?php echo esc_attr( $vincent_design ); ?>"]:checked) [data-vdp-nav-designs]:not([data-vdp-nav-designs~="<?php echo esc_attr( $vincent_design ); ?>"]) { opacity: .45; }
+					.vdp-admin:has(#vincent_site_design option[value="<?php echo esc_attr( $vincent_design ); ?>"]:checked) [data-vdp-designs]:not([data-vdp-designs~="<?php echo esc_attr( $vincent_design ); ?>"]) .vdp-design-note { display: flex; }
+				<?php endforeach; ?>
 			</style>
 			<nav class="tw:hidden tw:lg:block" aria-label="<?php esc_attr_e( 'Settings sections', 'dev-portfolio' ); ?>">
 				<ol class="tw:sticky tw:top-[calc(var(--wp-admin--admin-bar--height,32px)+1.5rem)] tw:m-0 tw:flex tw:list-none tw:flex-col tw:gap-1 tw:p-0">
 					<?php $i = 0; ?>
 					<?php foreach ( $sections as $section_key => $section ) : ?>
 						<li class="tw:m-0">
-							<a href="#vdp-<?php echo esc_attr( $section_key ); ?>" class="vdp-nav-<?php echo esc_attr( $section_key ); ?> tw:group tw:flex tw:items-center tw:gap-3 tw:rounded-xl tw:px-3 tw:py-2.5 tw:text-sm tw:text-neutral-600 tw:no-underline tw:transition tw:hover:bg-white tw:hover:text-black tw:hover:shadow-sm tw:focus:shadow-none">
+							<a href="#vdp-<?php echo esc_attr( $section_key ); ?>"<?php echo vincent_design_attr( $section, 'data-vdp-nav-designs' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in the helper. ?> class="vdp-nav-<?php echo esc_attr( $section_key ); ?> tw:group tw:flex tw:items-center tw:gap-3 tw:rounded-xl tw:px-3 tw:py-2.5 tw:text-sm tw:text-neutral-600 tw:no-underline tw:transition tw:hover:bg-white tw:hover:text-black tw:hover:shadow-sm tw:focus:shadow-none">
 								<span class="tw:font-mono tw:text-[11px] tw:text-neutral-400 tw:group-hover:text-gold"><?php echo esc_html( str_pad( (string) ++$i, 2, '0', STR_PAD_LEFT ) ); ?></span>
 								<?php echo esc_html( $section['title'] ); ?>
 							</a>
@@ -622,7 +676,7 @@ function vincent_render_options_page() {
 
 				<?php $i = 0; ?>
 				<?php foreach ( $sections as $section_key => $section ) : ?>
-					<section id="vdp-<?php echo esc_attr( $section_key ); ?>" class="tw:overflow-hidden tw:rounded-3xl tw:bg-white tw:shadow-sm tw:ring-1 tw:ring-black/5">
+					<section id="vdp-<?php echo esc_attr( $section_key ); ?>"<?php echo vincent_design_attr( $section ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in the helper. ?> class="tw:overflow-hidden tw:rounded-3xl tw:bg-white tw:shadow-sm tw:ring-1 tw:ring-black/5">
 						<div class="tw:flex tw:flex-wrap tw:items-start tw:justify-between tw:gap-4 tw:border-b tw:border-black/5 tw:px-6 tw:py-5 tw:md:px-8">
 							<div class="tw:flex tw:items-start tw:gap-4">
 								<span class="tw:flex tw:size-10 tw:shrink-0 tw:items-center tw:justify-center tw:rounded-xl tw:bg-black tw:text-gold">
@@ -636,6 +690,7 @@ function vincent_render_options_page() {
 									<?php if ( ! empty( $section['description'] ) ) : ?>
 										<p class="tw:m-0 tw:mt-1 tw:text-sm tw:text-neutral-500"><?php echo esc_html( $section['description'] ); ?></p>
 									<?php endif; ?>
+									<?php vincent_design_note( $section ); ?>
 								</div>
 							</div>
 							<div class="tw:flex tw:flex-wrap tw:items-center tw:gap-4">
@@ -652,7 +707,7 @@ function vincent_render_options_page() {
 
 						<div class="vdp-fields tw:grid tw:gap-x-6 tw:gap-y-6 tw:px-6 tw:py-6 tw:transition-opacity tw:md:grid-cols-2 tw:md:px-8">
 							<?php foreach ( $section['fields'] as $key => $field ) : ?>
-								<div class="<?php echo in_array( $field['type'], $wide, true ) ? 'tw:md:col-span-2' : ''; ?>">
+								<div<?php echo vincent_design_attr( $field ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in the helper. ?> class="<?php echo in_array( $field['type'], $wide, true ) ? 'tw:md:col-span-2' : ''; ?>">
 									<label for="vincent_<?php echo esc_attr( $key ); ?>" class="tw:mb-2 tw:block tw:text-xs tw:font-semibold tw:uppercase tw:tracking-wider tw:text-neutral-700">
 										<?php echo esc_html( $field['label'] ); ?>
 									</label>
@@ -660,6 +715,7 @@ function vincent_render_options_page() {
 									<?php if ( ! empty( $field['help'] ) ) : ?>
 										<p class="tw:m-0 tw:mt-2 tw:text-xs tw:text-neutral-500"><?php echo esc_html( $field['help'] ); ?></p>
 									<?php endif; ?>
+									<?php vincent_design_note( $field ); ?>
 								</div>
 							<?php endforeach; ?>
 						</div>
@@ -676,4 +732,21 @@ function vincent_render_options_page() {
 		</div>
 	</div>
 	<?php
+	// Lock (inert) the settings the selected design doesn't use. Inert fields are still submitted, so
+	// their saved values are kept for when the design is switched back.
+	wp_print_inline_script_tag(
+		<<<'JS'
+(() => {
+	const select = document.getElementById("vincent_site_design");
+	if (!select) return;
+	const sync = () => {
+		document.querySelectorAll("[data-vdp-designs]").forEach((el) => {
+			el.inert = !el.dataset.vdpDesigns.split(" ").includes(select.value);
+		});
+	};
+	select.addEventListener("change", sync);
+	sync();
+})();
+JS
+	);
 }
